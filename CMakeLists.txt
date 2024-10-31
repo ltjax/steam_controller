@@ -1,12 +1,7 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.23)
 project(steam_controller)
 
 set(CMAKE_CXX_STANDARD 14)
-
-if(steam_controller_INCLUDE_CONAN)
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(TARGETS KEEP_RPATHS)
-endif()
 
 # Canonize platform selection
 set(steam_controller_PLATFORM Undefined)

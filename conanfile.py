@@ -1,4 +1,5 @@
-from conans import ConanFile, CMake
+from conan import ConanFile
+from conan.tools.cmake import CMake, cmake_layout
 
 
 class SteamControllerConan(ConanFile):
@@ -10,33 +11,36 @@ class SteamControllerConan(ConanFile):
     description = "Access the Steam Controller without Steam"
     topics = ("hardware", "gamepad")
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
-    generators = "cmake"
+    options = {"shared": [True, False], "fPIC": [True, False]}
+    default_options = {"shared": False, "fPIC": True}
+    generators = "CMakeDeps", "CMakeToolchain"
     exports_sources = "source/*", "externals/*",\
                       "!externals/hidapi/LICENSE-*.txt",\
                       "include/*", "CMakeLists.txt",\
                       "demo/*"
 
-    def _configured_cmake(self):
-        cmake = CMake(self)
-        cmake.configure(source_folder=".", defs={
-            'steam_controller_INCLUDE_CONAN': True
-        })
-        return cmake
-
+    def config_options(self):
+        if self.settings.os == "Windows":
+            del self.options.fPIC
+    
     def build(self):
-        self._configured_cmake().build()
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
 
     def package(self):
-        self._configured_cmake().install()
+        cmake = CMake(self)
+        cmake.install()
+
+    def layout(self):
+        cmake_layout(self)
 
     def package_info(self):
         self.cpp_info.libs = ["steam_controller"]
         if self.settings.os == "Windows":
-            self.cpp_info.libs.append("Setupapi")
+            self.cpp_info.system_libs.append("Setupapi")
         if self.settings.os == "Linux":
-            self.cpp_info.libs.append("udev")
+            self.cpp_info.system_libs.append("udev")
         if self.settings.os == "Macos":
             self.cpp_info.exelinkflags.append("-framework CoreFoundation")
             self.cpp_info.exelinkflags.append("-framework IOKit")

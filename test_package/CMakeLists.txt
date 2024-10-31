@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.25)
 project(PackageTest CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+find_package(steam_controller CONFIG REQUIRED)
 
 add_executable(example example.cpp)
-target_link_libraries(example ${CONAN_LIBS})
+target_link_libraries(example steam_controller::steam_controller)
 
