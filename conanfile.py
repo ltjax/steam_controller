@@ -42,7 +42,6 @@ class SteamControllerConan(ConanFile):
         if self.settings.os == "Linux":
             self.cpp_info.system_libs.append("udev")
         if self.settings.os == "Macos":
-            self.cpp_info.exelinkflags.append("-framework CoreFoundation")
-            self.cpp_info.exelinkflags.append("-framework IOKit")
+            self.cpp_info.frameworks.extend(["CoreFoundation", "IOKit"])
 
 
